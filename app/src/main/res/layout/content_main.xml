@@ -13,8 +13,17 @@
     tools:context="com.jimtrinh9985gmail.thelocals.MainActivity"
     tools:showIn="@layout/activity_main">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/my_location"
+        android:text="Testing Location"
+        android:gravity="center"
+        android:textStyle="bold" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView1"
+        android:layout_below="@+id/my_location"
         android:layout_height="match_parent"
         android:layout_width="match_parent" />
 </RelativeLayout>
