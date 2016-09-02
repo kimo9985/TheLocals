@@ -11,17 +11,24 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import com.google.android.gms.awareness.snapshot.LocationResult;
+import com.google.android.gms.common.api.Status;
 
 /**
  * Created by Kimo on 8/25/2016.
  */
 public class MainActivity extends AppCompatActivity {
 
+    public final String LOG_TAG = MainActivity.class.getSimpleName();
+
     TextView locationText;
+    LocationResult locationResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +43,8 @@ public class MainActivity extends AppCompatActivity {
         LocationListener locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-
+                locationResult.getLocation();
+                Log.d(LOG_TAG, "Location:" + location);
             }
 
             @Override
