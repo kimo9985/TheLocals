@@ -10,6 +10,8 @@ import android.widget.ImageView;
  */
 public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
 
+    public final String LOG_TAG = Adapter.class.getSimpleName();
+
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return null;

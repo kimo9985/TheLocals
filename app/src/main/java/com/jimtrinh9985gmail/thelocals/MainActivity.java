@@ -18,7 +18,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.awareness.snapshot.LocationResult;
-import com.google.android.gms.common.api.Status;
 
 /**
  * Created by Kimo on 8/25/2016.
@@ -43,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
         LocationListener locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                locationResult.getLocation();
-                Log.d(LOG_TAG, "Location:" + location);
+                Log.d(LOG_TAG, "Lat: " + location.getLatitude());
+                Log.d(LOG_TAG, "Long: " + location.getLongitude());
             }
 
             @Override
@@ -54,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onProviderEnabled(String s) {
-
+                Log.d(LOG_TAG, "Provider Enabled: " + s);
             }
 
             @Override
@@ -63,7 +62,10 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission
+                (this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -74,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
