@@ -1,10 +1,10 @@
 package com.jimtrinh9985gmail.thelocals;
 
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -19,6 +19,8 @@ import android.widget.TextView;
 import com.google.android.gms.awareness.snapshot.LocationResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.wearable.Wearable;
 
@@ -27,27 +29,34 @@ import com.google.android.gms.wearable.Wearable;
  */
 public class MainActivity extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
 
     public final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    TextView locationText;
-    LocationResult locationResult;
-    protected Location getLocation;
     GoogleApiClient mGoogleApiClient;
+
+    TextView locationText;
+
+    LocationRequest getLocation;
+    //LocationResult locationResult;
+    //Location lastLocation;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        locationText = (TextView) findViewById(R.id.my_location);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        locationText = (TextView) findViewById(R.id.my_location);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
-                .addApi(Wearable.API)
+                .addApi(LocationServices.API)
                 .build();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -77,27 +86,52 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission
-                (this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+    public void onConnected(Bundle bundle) {
+
+        if () {
+
+            createLocationRequest();
+
+            LocationServices.FusedLocationApi.requestLocationUpdates
+                    (mGoogleApiClient, getLocation, this);
+
+            if (lastLocation != null) {
+                Log.d(LOG_TAG, "Lat: " + lastLocation.getLatitude());
+                Log.d(LOG_TAG, "Long: " + lastLocation.getLongitude());
+            } else {
+                Log.d(LOG_TAG, "Location Null!");
+            }
+
+            if (mGoogleApiClient.isConnected()) {
+                Log.d(LOG_TAG, "Lat: " + getLocation.toString());
+                Log.d(LOG_TAG, "Long: " + getLocation);
+            }
+
             return;
         }
-        getLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (getLocation != null) {
-            Log.d(LOG_TAG, "Lat: " + getLocation.getLatitude());
-            Log.d(LOG_TAG, "Long: " + getLocation.getLongitude());
-        } else {
-            Log.d(LOG_TAG, "Location Null!");
-        }
+        Log.d(LOG_TAG, "CheckSelf Failed, implement onRequest!!!");
+        ActivityCompat.requestPermissions(this, new String[]{"android.permission.ACCESS_FINE_LOCATION"}, 0);
+    }
+
+    protected void createLocationRequest() {
+        getLocation = new LocationRequest();
+        getLocation.setInterval(100000);
+        getLocation.setFastestInterval(5000);
+        getLocation.setSmallestDisplacement(5);
+        getLocation.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+        Log.d(LOG_TAG, "onLocationChanged!");
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
 
     }
 
@@ -107,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+    public void onConnectionFailed(ConnectionResult connectionResult) {
 
     }
 
